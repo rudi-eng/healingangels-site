@@ -1,0 +1,29 @@
+name = "healingangels-api"
+main = "src/main.py"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["python_workers"]
+
+# D1 database binding — create with:
+#   wrangler d1 create healingangels
+# then paste the database_id below.
+[[d1_databases]]
+binding = "DB"
+database_name = "healingangels"
+database_id = "REPLACE_WITH_D1_ID"
+
+# R2 bucket binding — create with:
+#   wrangler r2 bucket create healing-photos
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "healing-photos"
+
+# Secrets (NEVER commit these). Set each with: wrangler secret put NAME
+#   ADMIN_USERNAME         e.g. "Laleh"
+#   ADMIN_PASSWORD_HASH    bcrypt hash of the chosen password (see scripts/hash.py)
+#   SESSION_SECRET         long random string for signing session cookies
+
+[vars]
+# Public configuration. These can be committed.
+CORS_ORIGIN = "https://healingangels.pages.dev"
+# When you point healingangels.site to Cloudflare, set:
+# CORS_ORIGIN = "https://healingangels.site"

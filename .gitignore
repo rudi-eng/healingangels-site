@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Cloudflare / Wrangler
+.wrangler/
+.dev.vars
+worker/.wrangler/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.log
+
+# Local secrets
+*.pem
+secrets/

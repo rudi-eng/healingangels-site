@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Members &amp; Therapy Stories | Healing Angels</title>
+  <meta name="description" content="The members of Healing Angels and their therapy stories — how a cat or dog helped them heal. Share your own story and join.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=Vazirmatn:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-i18n-title="meta.title.members" data-i18n-desc="meta.desc.members">
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="index.html">
+      <span class="brand-mark"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" width="38" height="38" aria-hidden="true"><path d="M16 4 C 11 4 7 8 7 14 c 0 6 4 14 9 14 s 9-8 9-14 c 0-6-4-10-9-10 z M 11 9 l 1.5 2.5 M 21 9 l -1.5 2.5" stroke="#C9A6A0" stroke-width="1.6" fill="#FBEFD6"/><circle cx="13" cy="13" r="1" fill="#A9807A"/><circle cx="19" cy="13" r="1" fill="#A9807A"/></svg></span>
+      <span><span class="brand-name">Healing Angels</span><br><span class="brand-tag" data-i18n="brand.tag">Prayer · Cats · Healing</span></span>
+    </a>
+    <button class="nav-toggle" data-i18n-aria="nav.open" aria-label="Open menu"><span></span><span></span><span></span></button>
+    <nav class="nav">
+      <a href="index.html" data-nav="home" data-i18n="nav.home">Home</a>
+      <a href="members.html" data-nav="members" data-i18n="nav.members">Members</a>
+      <a href="blog.html" data-nav="blog" data-i18n="nav.blog">Blog</a>
+      <a href="club.html" data-nav="club" data-i18n="nav.club">Friends of Caycuma</a>
+      <a href="admin.html" class="btn" data-i18n="nav.owner">Owner</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<section style="background: radial-gradient(circle at 15% 0%, rgba(139,168,136,.12), transparent 45%), linear-gradient(180deg, var(--cream) 0%, var(--cream-2) 100%); padding: 64px 0 32px;">
+  <div class="container">
+    <div class="section-head" style="margin-bottom: 24px;">
+      <span class="eyebrow" data-i18n="members.eyebrow">Therapy Session · Members</span>
+      <h2 data-i18n="members.h2">Stories of being healed by an angel with paws</h2>
+      <p data-i18n="members.p">Every member of Healing Angels has a story. Some are quiet, some are big — all of them are true. Below are the people who chose to share theirs.</p>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top: 24px;">
+  <div class="container">
+    <div class="gallery" id="members-grid">
+      <div class="card"><div class="card-body"><p class="muted" data-i18n="members.loading">Loading members…</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="join" class="section-soft">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow" data-i18n="join.eyebrow">Become a member</span>
+      <h2 data-i18n="join.h2">Share your story</h2>
+      <p data-i18n="join.p">Membership is free and gentle. Tell us about you and your cat or dog. The owner will read your story and, once approved, it will appear in the Therapy Session gallery above.</p>
+    </div>
+    <form class="form-card" id="join-form" autocomplete="on">
+      <div class="field-row">
+        <div class="field"><label for="m-name" data-i18n="join.name">Your name</label><input id="m-name" name="name" required></div>
+        <div class="field"><label for="m-location" data-i18n="join.location">City / town</label><input id="m-location" name="location"></div>
+      </div>
+      <div class="field-row-3">
+        <div class="field"><label for="m-pet" data-i18n="join.pet">Pet's name</label><input id="m-pet" name="pet_name" required></div>
+        <div class="field">
+          <label for="m-species" data-i18n="join.species">Species</label>
+          <select id="m-species" name="pet_species">
+            <option value="cat" data-i18n="join.species.cat">Cat</option>
+            <option value="dog" data-i18n="join.species.dog">Dog</option>
+            <option value="other" data-i18n="join.species.other">Other</option>
+          </select>
+        </div>
+        <div class="field"><label for="m-breed" data-i18n="join.breed">Breed / description</label><input id="m-breed" name="pet_breed" data-i18n-placeholder="join.breed.ph" placeholder="e.g. tabby, golden retriever"></div>
+      </div>
+      <div class="field">
+        <label for="m-photo" data-i18n="join.photo">Photo URL (optional)</label>
+        <input id="m-photo" name="photo_url" data-i18n-placeholder="join.photo.ph" placeholder="https://… (owner can add a photo for you later)">
+      </div>
+      <div class="field">
+        <label for="m-story" data-i18n="join.story">Your therapy story</label>
+        <textarea id="m-story" name="story" required data-i18n-placeholder="join.story.ph" placeholder="How did your cat or dog help you through something? A few sentences are enough. You can write more if you wish."></textarea>
+      </div>
+      <fieldset style="border:1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 0 0 18px;">
+        <legend style="font-size:.82rem; letter-spacing:.12em; text-transform:uppercase; color: var(--ink-soft); font-weight: 500; padding: 0 8px;" data-i18n="join.badges">Badges (optional)</legend>
+        <label style="display:block; padding:5px 0;"><input type="checkbox" name="badges" value="donated"> <span data-i18n="join.badge.donated">I have donated to Friends of Caycuma</span></label>
+        <label style="display:block; padding:5px 0;"><input type="checkbox" name="badges" value="adopter"> <span data-i18n="join.badge.adopter">I have adopted a cat or dog</span></label>
+        <label style="display:block; padding:5px 0;"><input type="checkbox" name="badges" value="volunteer"> <span data-i18n="join.badge.volunteer">I volunteer with animals</span></label>
+      </fieldset>
+      <div class="field">
+        <label for="m-contact" data-i18n="join.contact">Public contact (optional — only shown if you fill this in)</label>
+        <input id="m-contact" name="contact_value" data-i18n-placeholder="join.contact.ph" placeholder="email, website, or social handle">
+        <input type="hidden" name="contact_type" value="email">
+      </div>
+      <div class="actions"><button type="submit" class="btn" data-i18n="join.submit">Send my story</button></div>
+      <div class="form-msg" id="join-msg"></div>
+      <p class="form-note" data-i18n="join.note">Your story is held for the owner's approval before it appears. Thank you for trusting us with it.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><div class="footer-brand">Healing Angels</div><p class="muted" data-i18n="footer.tagline">A prayerful community about how cats and dogs heal us — and how we heal them in return.</p></div>
+      <div><h4 data-i18n="footer.explore">Explore</h4><a href="index.html" data-i18n="nav.home">Home</a><a href="members.html" data-i18n="nav.members">Members</a><a href="blog.html" data-i18n="nav.blog">Blog</a><a href="club.html" data-i18n="nav.club">Friends of Caycuma</a></div>
+      <div><h4 data-i18n="footer.takePart">Take part</h4><a href="#join" data-i18n="footer.becomeMember">Become a member</a><a href="club.html#donate" data-i18n="footer.donate">Donate</a><a href="club.html#volunteer" data-i18n="footer.volunteer">Volunteer</a><a href="club.html#adopt" data-i18n="footer.adopt">Adopt</a></div>
+      <div><h4 data-i18n="footer.owner">Owner</h4><a href="admin.html" data-i18n="footer.ownerLogin">Owner login</a><a href="mailto:hello@healingangels.site" data-i18n="footer.contact">Contact</a></div>
+    </div>
+    <div class="footer-bottom"><span>&copy; <span data-year>2026</span> <span data-i18n="footer.copy">Healing Angels · Friends of Caycuma</span></span><span class="faint" data-i18n="footer.made">made with quiet prayers</span></div>
+  </div>
+</footer>
+
+<script src="assets/js/app.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script>
+HA.setNavActive("members");
+
+function showMsg(id, kind, text) {
+  const n = document.getElementById(id);
+  n.className = "form-msg " + kind;
+  n.textContent = text;
+}
+
+function renderMembers(list) {
+  const grid = document.getElementById("members-grid");
+  if (!list || list.length === 0) {
+    grid.innerHTML = '<p class="empty">' + HA.esc(HA.t("members.empty")) + '</p>';
+    return;
+  }
+  grid.innerHTML = list.map((m, idx) => `
+    <article class="card">
+      ${HA.imgOrPlaceholder(m.photo_url, idx, m.name + " " + HA.t("and") + " " + (m.pet_name || HA.t("theirAngel")))}
+      <div class="card-body">
+        <h3>${HA.esc(m.name)}</h3>
+        <div class="card-sub">${HA.esc(m.pet_name || "")}${m.pet_species ? " · " + HA.esc(m.pet_species) : ""}${m.location ? " · " + HA.esc(m.location) : ""}</div>
+        <p class="card-text">${HA.esc(m.story || "")}</p>
+        ${(m.badges || []).map(b => `<span class="badge ${HA.esc(b)}">${HA.esc(HA.badgeLabel(b))}</span>`).join("")}
+        ${m.contact_value ? `<p class="faint" style="font-size:.86rem; margin-top:8px;">${HA.esc(HA.t("members.contact"))} ${HA.esc(m.contact_value)}</p>` : ""}
+      </div>
+    </article>`).join("");
+}
+
+function loadMembers() {
+  HA.api.members()
+    .then(d => renderMembers(d.members))
+    .catch(() => {
+      document.getElementById("members-grid").innerHTML = '<p class="empty">' + HA.esc(HA.t("members.error")) + '</p>';
+    });
+}
+
+loadMembers();
+window.addEventListener("ha:langchange", loadMembers);
+
+document.getElementById("join-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.currentTarget;
+  const btn = f.querySelector("button[type=submit]");
+  btn.disabled = true; btn.textContent = HA.t("join.sending");
+  const badges = Array.from(f.querySelectorAll('input[name="badges"]:checked')).map(c => c.value);
+  const body = {
+    name: f.name.value,
+    location: f.location.value,
+    pet_name: f.pet_name.value,
+    pet_species: f.pet_species.value,
+    pet_breed: f.pet_breed.value,
+    photo_url: f.photo_url.value,
+    story: f.story.value,
+    badges,
+    contact_type: f.contact_type.value,
+    contact_value: f.contact_value.value,
+  };
+  try {
+    await HA.api.registerMember(body);
+    showMsg("join-msg", "ok", HA.t("join.ok"));
+    f.reset();
+  } catch (err) {
+    showMsg("join-msg", "err", HA.t("join.err") + " " + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = HA.t("join.submit");
+  }
+});
+</script>
+</body>
+</html>

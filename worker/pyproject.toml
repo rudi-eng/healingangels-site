@@ -1,0 +1,16 @@
+[project]
+name = "healingangels-api"
+version = "0.1.0"
+description = "Healing Angels API — Cloudflare Python Worker (FastAPI on Workers)"
+requires-python = ">=3.11"
+dependencies = [
+    "workers-py>=0.0.5",
+]
+
+[dependency-groups]
+dev = [
+    "workers-py>=0.0.5",
+]
+
+[tool.pywrangler]
+# nothing custom required by default

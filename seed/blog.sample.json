@@ -1,0 +1,20 @@
+{
+  "posts": [
+    {
+      "id": "post_seed_welcome",
+      "title": "Why we are here, and a quiet welcome",
+      "slug": "why-we-are-here",
+      "cover_url": "",
+      "published_at": "2026-08-11",
+      "body_md": "# Why we are here\n\nHealing Angels began with one cat who walked in through a kitchen window, and one prayer whispered to whatever is holy: *please send me something small to love.*\n\nThis is a quiet place about that prayer — and about how often the answer comes with paws.\n\n## What you will find here\n\n- **An Insight of the Day** — a phrase from the book (or simply from the morning) and a short prayer to carry.\n- **Therapy Session** — true stories from members about how a cat or dog helped them through.\n- **Friends of Caycuma** — a small rescue effort in a small town where street cats and dogs are fed, healed and found homes.\n\n## A note on dogs\n\nWe began with cats. But Caycuma's dogs needed us too, and so we let them in. The small angels do not seem to care which species we belonged to first. Neither do we.\n\n---\n\n*Welcome. Bring a prayer if you have one. Bring nothing if you do not. Either way — you are among friends.*"
+    },
+    {
+      "id": "post_seed_prayer_purr",
+      "title": "On the purr as prayer",
+      "slug": "the-purr-as-prayer",
+      "cover_url": "",
+      "published_at": "2026-08-09",
+      "body_md": "# On the purr as prayer\n\nA cat's purr vibrates between 25 and 140 hertz. There are studies that say this frequency helps bones knit and soft tissue mend. I have read those studies and I respect them.\n\nBut the truth is I do not pet a cat for the science.\n\nI pet a cat because when I do, two small things happen at once:\n\n1. The cat closes its eyes, and the world I cannot see becomes, to it, a safer place.\n2. I close my eyes, and the world *I* cannot see becomes, to me, a safer place too.\n\nThat, I think, is what prayer was supposed to be — before we made it complicated.\n\n## A short prayer\n\n*Small warm thing beside me,*\n*your quiet hum is the only sermon I needed today.*\n*Let me learn it by heart.*\n*Amen.*"
+    }
+  ]
+}
