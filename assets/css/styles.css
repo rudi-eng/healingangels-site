@@ -434,11 +434,17 @@ section { padding: clamp(56px, 8vw, 96px) 0; }
 }
 .skip-link:focus { left: 0; }
 
-/* Subtle page fade-in */
-body { animation: pageIn .45s ease both; }
+/* Subtle page fade-in (never leave the page stuck invisible) */
+body {
+  opacity: 1;
+  animation: pageIn .45s ease;
+}
 @keyframes pageIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body { animation: none; opacity: 1; }
 }
 
 /* Hero accent underline */

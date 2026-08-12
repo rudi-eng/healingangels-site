@@ -477,6 +477,11 @@
   };
 
   function init() {
+    // Guarantee visible body even if a CSS animation misbehaves
+    try {
+      document.body.style.opacity = "1";
+    } catch (e) {}
+
     var toggle = document.querySelector(".nav-toggle");
     var nav = document.querySelector(".nav");
     if (toggle && nav)
@@ -488,7 +493,11 @@
     });
   }
 
-  document.addEventListener("DOMContentLoaded", init);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
 
   window.HA = Object.assign(window.HA || {}, {
     data: data,
