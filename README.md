@@ -2,18 +2,7 @@
 
 A quiet, professional, prayerful community website about how cats (and dogs) heal us — and how we heal them in return. Built for the **Friends of Caycuma** rescue effort in Caycuma.
 
-## Languages
-
-The public site supports four languages (switcher in the header; preference is remembered):
-
-| Code | Language | Notes |
-|------|----------|--------|
-| **EN** | English | Default |
-| **DE** | Deutsch | German |
-| **TR** | Türkçe | Turkish |
-| **FA** | فارسی | Persian (RTL, Vazirmatn font) |
-
-Translations live in `assets/js/i18n.js`. Blog posts, member stories, and daily insights from the API remain in the language they were written in.
+The site is in **English**.
 
 The site has:
 
@@ -51,13 +40,14 @@ All on Cloudflare's **free tier**.
 ## Repository layout
 
 ```
-healingangels.site/
+healingangels-site/
 ├── index.html  club.html  members.html  admin.html  blog.html
 ├── blog/post.html
 ├── assets/
 │   ├── css/styles.css
 │   ├── js/app.js   (shared frontend runtime + API client)
 │   └── js/admin.js (owner dashboard runtime)
+├── wrangler.toml            Cloudflare Pages (static site)
 ├── worker/                  Python Cloudflare Worker (the API)
 │   ├── wrangler.toml
 │   ├── pyproject.toml

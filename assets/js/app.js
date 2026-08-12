@@ -87,19 +87,13 @@
     if (!s) return "";
     try {
       const d = new Date(s);
-      const loc = (window.HA && HA.i18n && HA.i18n.locale) ? HA.i18n.locale() : undefined;
-      return d.toLocaleDateString(loc, { year: "numeric", month: "long", day: "numeric" });
+      return d.toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" });
     } catch (e) { return s; }
   }
 
-  function t(key, fallback) {
-    if (window.HA && HA.i18n && typeof HA.i18n.t === "function") return HA.i18n.t(key, fallback);
-    return fallback != null ? fallback : key;
-  }
-
   function badgeLabel(b) {
-    const map = { donated: "badge.donated", adopter: "badge.adopter", volunteer: "badge.volunteer" };
-    return t(map[b] || ("badge." + b), b);
+    const map = { donated: "donated", adopter: "adopter", volunteer: "volunteer" };
+    return map[b] || b;
   }
 
   function esc(s) {
@@ -188,6 +182,6 @@
   document.addEventListener("DOMContentLoaded", init);
 
   window.HA = Object.assign(window.HA || {}, {
-    api, el, fmtDate, esc, mdToHtml, placeholderSVG, imgOrPlaceholder, setNavActive, API_BASE, t, badgeLabel
+    api, el, fmtDate, esc, mdToHtml, placeholderSVG, imgOrPlaceholder, setNavActive, API_BASE, badgeLabel
   });
 })();

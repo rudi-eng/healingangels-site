@@ -21,19 +21,19 @@ Estimated time: **15 minutes**. All on Cloudflare's **free tier**.
 ## 1. Push this repo to GitHub
 
 ```
-cd healingangels.site
+cd healingangels-site
 git init
 git add -A
 git commit -m "Healing Angels — initial site + API"
 git branch -M main
-git remote add origin https://github.com/<your-username>/healingangels.site.git
+git remote add origin https://github.com/<your-username>/healingangels-site.git
 git push -u origin main
 ```
 
 ## 2. Deploy the static front end on Cloudflare Pages
 
 1. Go to **Cloudflare Dashboard → Pages → Create project → Connect to Git**.
-2. Pick your `healingangels.site` repository.
+2. Pick your `healingangels-site` repository.
 3. Build settings:
    - **Framework preset**: `None`
    - **Build command**: *(leave empty)*
@@ -148,7 +148,7 @@ cd worker
 uv run pywrangler dev
 
 # terminal 2 — serve the static pages
-cd healingangels.site
+cd healingangels-site
 python -m http.server 8000
 ```
 
