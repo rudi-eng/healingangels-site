@@ -1,33 +1,32 @@
 # Owner desk — Healing Angels
 
-Open **`admin.html`**. There is no password. Keep the URL private if you prefer.
+Open **`admin.html`**.
 
-## Tabs
+## Password
 
-| Tab | What you do |
-|-----|-------------|
-| **Insight** | Write the homepage “Insight of the Day” + short prayer |
-| **Blog** | Write, edit, delete journal posts (Markdown-friendly) |
-| **Members** | Approve or reject therapy stories; remove published ones |
-| **Caycuma** | Approve adoption listings and volunteer offers |
-| **Save JSON** | Download the data files for the live site |
+- Default password: **`1234Laleh`**
+- Change it under **Password** after you unlock the desk.
+- **Lock desk** signs you out of this browser tab.
 
-## Email & phone (private)
+## What is secret
 
-When people sign up they must give **email** and **phone**.
+| Visible on site / desk | Secret (private vault) |
+|------------------------|-------------------------|
+| Names, stories, pets, blog, insight | Email addresses |
+| Approve / reject actions | Phone numbers |
 
-- Not shown on the public website  
-- Not shown in the owner desk tables  
-- Only inside **`data/members.json`** and **`data/listings.json`**
+Email and phone are **never** shown on the public site or in the owner tables.  
+They are stored automatically in a locked vault when someone signs up.  
+Only a signed-in owner can download them via **Backup → Download secret backup**.
 
-After you **Download all JSON**, open those files on your computer when you need to call or write someone.
+## Everyday use
 
-## Making changes live
+1. Unlock with your password.
+2. Write insight / blog, approve members — **saves automatically**.
+3. Optional: **Backup** if you want a private file copy offline.
+4. **Lock desk** when finished.
 
-Edits first live in **this browser**. To publish:
+## Forgot password?
 
-1. **Save JSON** → four files download.  
-2. Put them in the project’s `data/` folder.  
-3. Push to GitHub (or re-upload the folder).  
-
-**Reset to site files** throws away local browser edits and reloads from the uploaded JSON.
+Clear this site’s data in the browser (site settings → clear data).  
+That resets the password to **`1234Laleh`**, but also clears local edits and the private contact vault unless you restored a backup.

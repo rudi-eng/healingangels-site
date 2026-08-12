@@ -2,18 +2,18 @@
 
 A quiet, professional, prayerful community website about how cats (and dogs) heal us — and how we heal them in return. Built for the **Friends of Caycuma** rescue effort in Caycuma.
 
-**English only.** Beautiful on the outside, simple underneath: plain HTML, CSS, JS, and a few JSON files. No database. No worker. No login wall.
+**English only.** Beautiful on the outside, simple underneath: plain HTML, CSS, JS, and JSON. No database. No worker.
 
 ## How it works
 
 | Piece | What it is |
 |--------|------------|
-| Public pages | Static HTML that load `data/*.json` |
-| Content | `data/insight.json`, `members.json`, `blog.json`, `listings.json` |
-| Signups | Forms save into this browser; owner exports JSON to put back in `data/` |
-| Owner desk | `admin.html` — write insight & blog, approve stories, download JSON |
+| Public pages | Static HTML + public JSON (no emails/phones) |
+| Auto-save | Signups and owner edits save automatically in the browser |
+| Secret vault | Email & phone stored privately — never on public pages or desk tables |
+| Owner desk | `admin.html` — **password locked** (default `1234Laleh`) |
 
-**Email and phone** are collected on member, volunteer, and list-a-pet forms. They live **only inside the JSON files**. They are **never** shown on the public site or on the owner desk. Open `data/members.json` or `data/listings.json` when you need to contact someone.
+**Email and phone** are required on signup forms. They are **secret**: not on the website, not in the owner tables. Only a signed-in owner can download them via **Backup**.
 
 ## Pages
 
@@ -25,11 +25,11 @@ A quiet, professional, prayerful community website about how cats (and dogs) hea
 
 ## Everyday workflow
 
-1. Open the site (or `admin.html`).
-2. Write today’s insight, a blog post, approve members.
-3. **Save JSON** → downloads four files.
-4. Drop them into the `data/` folder and push / re-upload.
-5. Live site updates. That’s it.
+1. Open `admin.html` → unlock with password (`1234Laleh` until you change it).
+2. Write today’s insight, a blog post, approve members — **saves automatically**.
+3. Change your password under **Password**.
+4. Optional: **Backup** for a private offline copy (includes secret contacts).
+5. **Lock desk** when done.
 
 ## Local preview
 

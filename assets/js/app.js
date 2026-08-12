@@ -1,14 +1,17 @@
 /* Healing Angels — static site runtime
-   Content lives in data/*.json. Signups and owner edits are stored in
-   localStorage and can be exported as JSON from the owner page.
-   Email and phone are kept in JSON only — never rendered on the public
-   site or in the owner dashboard.
+   - Public content: data/*.json + local auto-save (no email/phone)
+   - Private contacts: locked vault (email/phone) — not on public pages or desk tables
+   - Owner desk: password gate (default 1234Laleh), changeable
 */
 
 (function () {
   "use strict";
 
   var STORE_KEY = "ha_store_v1";
+  var PRIVATE_KEY = "ha_private_v1";
+  var AUTH_KEY = "ha_auth_v1";
+  var SESSION_KEY = "ha_session_v1";
+  var DEFAULT_PASSWORD = "1234Laleh";
 
   /** Path to data/*.json from the current HTML page (handles blog/ subfolder). */
   function dataPath(file) {
@@ -168,6 +171,185 @@
     localStorage.setItem(STORE_KEY, JSON.stringify(store));
   }
 
+  /* ---------- Password / session ---------- */
+  function toHex(buffer) {
+    return Array.from(new Uint8Array(buffer))
+      .map(function (b) {
+        return b.toString(16).padStart(2, "0");
+      })
+      .join("");
+  }
+
+  async function sha256(text) {
+    var buf = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(String(text))
+    );
+    return toHex(buf);
+  }
+
+  async function ensureAuthInit() {
+    try {
+      var raw = localStorage.getItem(AUTH_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && parsed.hash) return parsed;
+      }
+    } catch (e) {}
+    var hash = await sha256(DEFAULT_PASSWORD);
+    var auth = { hash: hash, updated_at: new Date().toISOString() };
+    localStorage.setItem(AUTH_KEY, JSON.stringify(auth));
+    return auth;
+  }
+
+  function isLoggedIn() {
+    try {
+      return sessionStorage.getItem(SESSION_KEY) === "1";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function login(password) {
+    var auth = await ensureAuthInit();
+    var h = await sha256(password || "");
+    if (h !== auth.hash) {
+      var err = new Error("Wrong password.");
+      throw err;
+    }
+    try {
+      sessionStorage.setItem(SESSION_KEY, "1");
+    } catch (e) {}
+    return { ok: true };
+  }
+
+  function logout() {
+    try {
+      sessionStorage.removeItem(SESSION_KEY);
+    } catch (e) {}
+  }
+
+  async function changePassword(currentPassword, newPassword) {
+    var auth = await ensureAuthInit();
+    var cur = await sha256(currentPassword || "");
+    if (cur !== auth.hash) throw new Error("Current password is wrong.");
+    var next = String(newPassword || "");
+    if (next.length < 4) throw new Error("New password must be at least 4 characters.");
+    var hash = await sha256(next);
+    localStorage.setItem(
+      AUTH_KEY,
+      JSON.stringify({ hash: hash, updated_at: new Date().toISOString() })
+    );
+    try {
+      sessionStorage.setItem(SESSION_KEY, "1");
+    } catch (e) {}
+    return { ok: true };
+  }
+
+  /* ---------- Private contact vault (email/phone only) ---------- */
+  function readPrivate() {
+    try {
+      var raw = localStorage.getItem(PRIVATE_KEY);
+      if (!raw) return { members: {}, listings: {} };
+      var p = JSON.parse(raw);
+      return {
+        members: p.members || {},
+        listings: p.listings || {},
+      };
+    } catch (e) {
+      return { members: {}, listings: {} };
+    }
+  }
+
+  function writePrivate(vault) {
+    localStorage.setItem(PRIVATE_KEY, JSON.stringify(vault));
+  }
+
+  function setPrivateContact(kind, id, email, phone) {
+    var vault = readPrivate();
+    if (!vault[kind]) vault[kind] = {};
+    vault[kind][id] = {
+      email: (email || "").trim(),
+      phone: (phone || "").trim(),
+    };
+    writePrivate(vault);
+  }
+
+  function deletePrivateContact(kind, id) {
+    var vault = readPrivate();
+    if (vault[kind] && vault[kind][id]) {
+      delete vault[kind][id];
+      writePrivate(vault);
+    }
+  }
+
+  /** Strip email/phone from a public record (never leave them in the public store). */
+  function publicizeMember(m) {
+    if (!m) return m;
+    return {
+      id: m.id,
+      name: m.name || "",
+      location: m.location || "",
+      photo_url: m.photo_url || "",
+      pet_name: m.pet_name || "",
+      pet_species: m.pet_species || "",
+      pet_breed: m.pet_breed || "",
+      story: m.story || "",
+      badges: Array.isArray(m.badges) ? m.badges : [],
+      status: m.status || "pending",
+      submitted_at: m.submitted_at || "",
+    };
+  }
+
+  function publicizeListing(l) {
+    if (!l) return l;
+    return {
+      id: l.id,
+      type: l.type || "adopt",
+      title: l.title || "",
+      body: l.body || "",
+      photo_url: l.photo_url || "",
+      pet_species: l.pet_species || "",
+      pet_breed: l.pet_breed || "",
+      status: l.status || "pending",
+      submitted_at: l.submitted_at || "",
+    };
+  }
+
+  /** Migrate any email/phone found on records into the private vault. */
+  function migrateSecretsFrom(store) {
+    var vault = readPrivate();
+    var changed = false;
+    (store.members || []).forEach(function (m) {
+      if (!m || !m.id) return;
+      if (m.email || m.phone) {
+        if (!vault.members[m.id]) {
+          vault.members[m.id] = {
+            email: (m.email || "").trim(),
+            phone: (m.phone || "").trim(),
+          };
+          changed = true;
+        }
+      }
+    });
+    (store.listings || []).forEach(function (l) {
+      if (!l || !l.id) return;
+      if (l.email || l.phone || l.contact) {
+        if (!vault.listings[l.id]) {
+          vault.listings[l.id] = {
+            email: (l.email || "").trim(),
+            phone: (l.phone || l.contact || "").trim(),
+          };
+          changed = true;
+        }
+      }
+    });
+    if (changed) writePrivate(vault);
+    store.members = (store.members || []).map(publicizeMember);
+    store.listings = (store.listings || []).map(publicizeListing);
+    return store;
+  }
+
   function emptyStore() {
     return {
       _dirty: false,
@@ -200,7 +382,7 @@
       var listings = await fetchJson(dataPath("listings.json"));
       base.listings = Array.isArray(listings.listings) ? listings.listings : [];
     } catch (e) {}
-    return base;
+    return migrateSecretsFrom(base);
   }
 
   function mergeById(fileItems, localItems) {
@@ -226,13 +408,14 @@
     var local = readLocal();
     if (!local || !local._dirty) return base;
 
-    return {
+    var merged = {
       _dirty: true,
       insight: local.insight || base.insight,
       members: mergeById(base.members, local.members),
       posts: mergeById(base.posts, local.posts),
       listings: mergeById(base.listings, local.listings),
     };
+    return migrateSecretsFrom(merged);
   }
 
   function getStoreSync() {
@@ -240,6 +423,7 @@
   }
 
   function saveStore(store) {
+    store = migrateSecretsFrom(store);
     store._dirty = true;
     writeLocal(store);
     return store;
@@ -292,8 +476,13 @@
     },
 
     registerMember: async function (body) {
+      var email = (body.email || "").trim();
+      var phone = (body.phone || "").trim();
+      if (!(body.name || "").trim() || !(body.story || "").trim() || !email || !phone) {
+        throw new Error("Name, story, email and phone are required.");
+      }
       var s = await loadStore();
-      var m = {
+      var m = publicizeMember({
         id: uid("m"),
         name: (body.name || "").trim(),
         location: (body.location || "").trim(),
@@ -302,15 +491,11 @@
         pet_species: body.pet_species || "cat",
         pet_breed: (body.pet_breed || "").trim(),
         story: (body.story || "").trim(),
-        email: (body.email || "").trim(),
-        phone: (body.phone || "").trim(),
         badges: Array.isArray(body.badges) ? body.badges : [],
         status: "pending",
         submitted_at: new Date().toISOString().slice(0, 10),
-      };
-      if (!m.name || !m.story || !m.email || !m.phone) {
-        throw new Error("Name, story, email and phone are required.");
-      }
+      });
+      setPrivateContact("members", m.id, email, phone);
       s.members.unshift(m);
       saveStore(s);
       return { ok: true, id: m.id };
@@ -326,6 +511,7 @@
         s.members = s.members.filter(function (x) {
           return x.id !== id;
         });
+        deletePrivateContact("members", id);
       } else {
         m.status = status;
       }
@@ -338,6 +524,7 @@
       s.members = s.members.filter(function (x) {
         return x.id !== id;
       });
+      deletePrivateContact("members", id);
       saveStore(s);
       return { ok: true };
     },
@@ -400,8 +587,12 @@
     },
 
     submitListing: async function (body) {
+      var email = (body.email || "").trim();
+      var phone = (body.phone || "").trim();
+      if (!(body.title || "").trim()) throw new Error("Title is required");
+      if (!email || !phone) throw new Error("Email and phone are required.");
       var s = await loadStore();
-      var row = {
+      var row = publicizeListing({
         id: uid("l"),
         type: body.type || "adopt",
         title: (body.title || "").trim(),
@@ -409,18 +600,10 @@
         photo_url: (body.photo_url || "").trim(),
         pet_species: body.pet_species || "",
         pet_breed: (body.pet_breed || "").trim(),
-        email: (body.email || "").trim(),
-        phone: (body.phone || "").trim(),
         status: "pending",
         submitted_at: new Date().toISOString().slice(0, 10),
-      };
-      if (!row.title) throw new Error("Title is required");
-      if (row.type !== "volunteer" && (!row.email || !row.phone)) {
-        throw new Error("Email and phone are required.");
-      }
-      if (row.type === "volunteer" && (!row.email || !row.phone)) {
-        throw new Error("Email and phone are required.");
-      }
+      });
+      setPrivateContact("listings", row.id, email, phone);
       s.listings.unshift(row);
       saveStore(s);
       return { ok: true, id: row.id };
@@ -436,6 +619,7 @@
         s.listings = s.listings.filter(function (x) {
           return x.id !== id;
         });
+        deletePrivateContact("listings", id);
       } else {
         row.status = status;
       }
@@ -448,32 +632,71 @@
       s.listings = s.listings.filter(function (x) {
         return x.id !== id;
       });
+      deletePrivateContact("listings", id);
       saveStore(s);
       return { ok: true };
     },
 
-    /** Download the four JSON files (includes private email/phone). */
+    /**
+     * Owner-only: full backup JSON including private email/phone.
+     * Requires an active login session.
+     */
     exportAll: async function () {
+      if (!isLoggedIn()) throw new Error("Please sign in first.");
       var s = await loadStore();
+      var vault = readPrivate();
+      var membersFull = (s.members || []).map(function (m) {
+        var priv = (vault.members && vault.members[m.id]) || {};
+        return Object.assign({}, m, {
+          email: priv.email || "",
+          phone: priv.phone || "",
+        });
+      });
+      var listingsFull = (s.listings || []).map(function (l) {
+        var priv = (vault.listings && vault.listings[l.id]) || {};
+        return Object.assign({}, l, {
+          email: priv.email || "",
+          phone: priv.phone || "",
+        });
+      });
       downloadJson("insight.json", {
         excerpt: s.insight.excerpt || "",
         prayer: s.insight.prayer || "",
         set_at: s.insight.set_at || "",
       });
       setTimeout(function () {
-        downloadJson("members.json", { members: s.members || [] });
+        downloadJson("members.json", { members: membersFull });
       }, 200);
       setTimeout(function () {
         downloadJson("blog.json", { posts: s.posts || [] });
       }, 400);
       setTimeout(function () {
-        downloadJson("listings.json", { listings: s.listings || [] });
+        downloadJson("listings.json", { listings: listingsFull });
       }, 600);
+      setTimeout(function () {
+        downloadJson("private-contacts.json", vault);
+      }, 800);
     },
 
     resetToFiles: function () {
+      if (!isLoggedIn()) throw new Error("Please sign in first.");
       localStorage.removeItem(STORE_KEY);
+      // keep password + private vault unless owner clears vault separately
     },
+
+    clearPrivateVault: function () {
+      if (!isLoggedIn()) throw new Error("Please sign in first.");
+      localStorage.removeItem(PRIVATE_KEY);
+    },
+  };
+
+  var auth = {
+    login: login,
+    logout: logout,
+    changePassword: changePassword,
+    isLoggedIn: isLoggedIn,
+    ensureInit: ensureAuthInit,
+    defaultHint: "Default password is 1234Laleh until you change it.",
   };
 
   function init() {
@@ -499,9 +722,13 @@
     init();
   }
 
+  // Warm password hash on first visit (so default 1234Laleh works immediately)
+  ensureAuthInit().catch(function () {});
+
   window.HA = Object.assign(window.HA || {}, {
     data: data,
     api: data, // keep old name so pages can call HA.api.*
+    auth: auth,
     fmtDate: fmtDate,
     esc: esc,
     mdToHtml: mdToHtml,

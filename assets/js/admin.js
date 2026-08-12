@@ -1,18 +1,23 @@
-/* Healing Angels — owner dashboard (JSON only, no login)
-   Email & phone are never shown here. Open the exported JSON files to see them.
+/* Healing Angels — owner dashboard
+   Password locked. Email/phone never shown in tables.
+   Content auto-saves; secret backup only after login.
 */
 
 (function () {
   "use strict";
   var api = HA.api;
+  var auth = HA.auth;
   var esc = HA.esc;
   var fmtDate = HA.fmtDate;
+
+  var loginView = document.getElementById("login-view");
+  var dash = document.getElementById("dash");
 
   function msg(id, kind, text) {
     var n = document.getElementById(id);
     if (!n) return;
-    n.className = "form-msg " + kind;
-    n.textContent = text;
+    n.className = "form-msg " + (kind || "");
+    n.textContent = text || "";
   }
 
   function clip(s, n) {
@@ -20,12 +25,86 @@
     return s.length > n ? s.slice(0, n) + "…" : s;
   }
 
+  function showLogin() {
+    loginView.classList.remove("hidden");
+    dash.classList.add("hidden");
+  }
+
+  function showDash() {
+    loginView.classList.add("hidden");
+    dash.classList.remove("hidden");
+    loadAll();
+  }
+
+  function requireSession() {
+    if (!auth.isLoggedIn()) {
+      showLogin();
+      return false;
+    }
+    return true;
+  }
+
+  // ---------- Auth ----------
+  auth.ensureInit().then(function () {
+    if (auth.isLoggedIn()) showDash();
+    else showLogin();
+  });
+
+  document.getElementById("login-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var f = e.currentTarget;
+    var btn = f.querySelector("button[type=submit]");
+    btn.disabled = true;
+    btn.textContent = "Checking…";
+    try {
+      await auth.login(f.password.value);
+      msg("login-msg", "ok", "Welcome back.");
+      f.password.value = "";
+      showDash();
+    } catch (err) {
+      msg("login-msg", "err", err.message || "Wrong password.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Unlock";
+    }
+  });
+
+  document.getElementById("logout-btn").addEventListener("click", function () {
+    auth.logout();
+    showLogin();
+    msg("login-msg", "", "");
+  });
+
+  document.getElementById("password-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    if (!requireSession()) return;
+    var f = e.currentTarget;
+    var btn = f.querySelector("button[type=submit]");
+    if (f.new.value !== f.confirm.value) {
+      msg("password-msg", "err", "New passwords do not match.");
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = "Saving…";
+    try {
+      await auth.changePassword(f.current.value, f.new.value);
+      msg("password-msg", "ok", "Password updated. Use the new one next time you unlock.");
+      f.reset();
+    } catch (err) {
+      msg("password-msg", "err", err.message || "Could not change password.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Update password";
+    }
+  });
+
   // ---------- Tabs ----------
   var tabs = document.querySelectorAll("#admin-nav a");
   var panes = document.querySelectorAll(".admin-tab");
   tabs.forEach(function (a) {
     a.addEventListener("click", function (e) {
       e.preventDefault();
+      if (!requireSession()) return;
       tabs.forEach(function (x) {
         x.classList.remove("active");
       });
@@ -37,37 +116,42 @@
     });
   });
 
-  // ---------- Export / reset ----------
-  var exportBtn = document.getElementById("export-json");
-  if (exportBtn) {
-    exportBtn.addEventListener("click", function () {
-      api.exportAll();
+  // ---------- Backup ----------
+  document.getElementById("export-json").addEventListener("click", async function () {
+    if (!requireSession()) return;
+    try {
+      await api.exportAll();
       msg(
         "export-msg",
         "ok",
-        "Downloading insight.json, members.json, blog.json, listings.json — put them in the data/ folder and re-upload the site."
+        "Downloading secret backup (includes private contacts). Keep these files private."
       );
-    });
-  }
+    } catch (err) {
+      msg("export-msg", "err", err.message);
+    }
+  });
 
-  var resetBtn = document.getElementById("reset-local");
-  if (resetBtn) {
-    resetBtn.addEventListener("click", function () {
-      if (
-        !confirm(
-          "Clear local edits and reload from the data/*.json files on the site?"
-        )
+  document.getElementById("reset-local").addEventListener("click", function () {
+    if (!requireSession()) return;
+    if (
+      !confirm(
+        "Clear local content edits and reload from the public data/*.json files? Private contacts vault is kept."
       )
-        return;
+    )
+      return;
+    try {
       api.resetToFiles();
       location.reload();
-    });
-  }
+    } catch (err) {
+      msg("export-msg", "err", err.message);
+    }
+  });
 
   // ---------- Insight ----------
   var insightForm = document.getElementById("insight-form");
   insightForm.addEventListener("submit", async function (e) {
     e.preventDefault();
+    if (!requireSession()) return;
     var f = e.currentTarget;
     var btn = f.querySelector("button[type=submit]");
     btn.disabled = true;
@@ -77,7 +161,7 @@
         excerpt: f.excerpt.value,
         prayer: f.prayer.value,
       });
-      msg("insight-msg", "ok", "Insight saved. Export JSON when you want it on the live site.");
+      msg("insight-msg", "ok", "Saved automatically.");
       loadInsight();
     } catch (err) {
       msg("insight-msg", "err", "Failed: " + err.message);
@@ -88,6 +172,7 @@
   });
 
   async function loadInsight() {
+    if (!auth.isLoggedIn()) return;
     var cur = document.getElementById("insight-current");
     try {
       var i = await api.insight();
@@ -112,6 +197,7 @@
   var postForm = document.getElementById("post-form");
   postForm.addEventListener("submit", async function (e) {
     e.preventDefault();
+    if (!requireSession()) return;
     var f = e.currentTarget;
     var btn = f.querySelector("button[type=submit]");
     btn.disabled = true;
@@ -124,7 +210,7 @@
         published_at: f.published_at.value,
         body_md: f.body_md.value,
       });
-      msg("post-msg", "ok", "Post saved.");
+      msg("post-msg", "ok", "Saved automatically.");
       f.reset();
       document.getElementById("p-id").value = "";
       document.getElementById("p-date").value = new Date()
@@ -149,6 +235,7 @@
   });
 
   async function loadPosts() {
+    if (!auth.isLoggedIn()) return;
     var tb = document.querySelector("#posts-table tbody");
     try {
       var data = await api.blog();
@@ -182,6 +269,7 @@
       });
       tb.querySelectorAll("[data-del]").forEach(function (b) {
         b.addEventListener("click", async function () {
+          if (!requireSession()) return;
           if (!confirm("Delete this post?")) return;
           await api.deletePost(b.getAttribute("data-del"));
           loadPosts();
@@ -194,6 +282,7 @@
   }
 
   async function editPost(id) {
+    if (!requireSession()) return;
     var p = await api.post(id);
     if (!p) return;
     document.getElementById("p-id").value = p.id;
@@ -201,14 +290,13 @@
     document.getElementById("p-cover").value = p.cover_url || "";
     document.getElementById("p-date").value = p.published_at || "";
     document.getElementById("p-body").value = p.body_md || "";
-    document
-      .querySelector('#admin-nav a[data-tab="blog"]')
-      .click();
+    document.querySelector('#admin-nav a[data-tab="blog"]').click();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // ---------- Members (no email/phone in UI) ----------
+  // ---------- Members ----------
   async function loadMembers() {
+    if (!auth.isLoggedIn()) return;
     var pendingTb = document.querySelector("#pending-table tbody");
     var approvedTb = document.querySelector("#members-table tbody");
     try {
@@ -269,12 +357,14 @@
 
       pendingTb.querySelectorAll("[data-approve]").forEach(function (b) {
         b.addEventListener("click", async function () {
+          if (!requireSession()) return;
           await api.setMemberStatus(b.getAttribute("data-approve"), "approved");
           loadMembers();
         });
       });
       pendingTb.querySelectorAll("[data-reject]").forEach(function (b) {
         b.addEventListener("click", async function () {
+          if (!requireSession()) return;
           if (!confirm("Reject and remove this submission?")) return;
           await api.setMemberStatus(b.getAttribute("data-reject"), "rejected");
           loadMembers();
@@ -282,6 +372,7 @@
       });
       approvedTb.querySelectorAll("[data-del-m]").forEach(function (b) {
         b.addEventListener("click", async function () {
+          if (!requireSession()) return;
           if (!confirm("Remove this member from the site?")) return;
           await api.deleteMember(b.getAttribute("data-del-m"));
           loadMembers();
@@ -295,8 +386,9 @@
     }
   }
 
-  // ---------- Listings (no email/phone in UI) ----------
+  // ---------- Listings ----------
   async function loadListings() {
+    if (!auth.isLoggedIn()) return;
     var pend = document.querySelector("#list-pending-table tbody");
     var pub = document.querySelector("#list-published-table tbody");
     try {
@@ -352,12 +444,14 @@
 
       pend.querySelectorAll("[data-la]").forEach(function (b) {
         b.addEventListener("click", async function () {
+          if (!requireSession()) return;
           await api.setListingStatus(b.getAttribute("data-la"), "approved");
           loadListings();
         });
       });
       pend.querySelectorAll("[data-lr]").forEach(function (b) {
         b.addEventListener("click", async function () {
+          if (!requireSession()) return;
           if (!confirm("Reject and remove?")) return;
           await api.setListingStatus(b.getAttribute("data-lr"), "rejected");
           loadListings();
@@ -365,6 +459,7 @@
       });
       pub.querySelectorAll("[data-ld]").forEach(function (b) {
         b.addEventListener("click", async function () {
+          if (!requireSession()) return;
           if (!confirm("Remove this listing?")) return;
           await api.deleteListing(b.getAttribute("data-ld"));
           loadListings();
@@ -379,6 +474,7 @@
   }
 
   function loadAll() {
+    if (!auth.isLoggedIn()) return;
     loadInsight();
     loadPosts();
     loadMembers();
@@ -386,6 +482,4 @@
     var d = document.getElementById("p-date");
     if (d && !d.value) d.value = new Date().toISOString().slice(0, 10);
   }
-
-  loadAll();
 })();

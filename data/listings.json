@@ -8,8 +8,6 @@
       "photo_url": "",
       "pet_species": "cat",
       "pet_breed": "gray domestic",
-      "email": "hello@healingangels.site",
-      "phone": "+90 555 000 1000",
       "status": "approved",
       "submitted_at": "2026-08-01"
     },
@@ -21,8 +19,6 @@
       "photo_url": "",
       "pet_species": "dog",
       "pet_breed": "mixed street",
-      "email": "hello@healingangels.site",
-      "phone": "+90 555 000 1000",
       "status": "approved",
       "submitted_at": "2026-08-02"
     },
@@ -34,8 +30,6 @@
       "photo_url": "",
       "pet_species": "cat",
       "pet_breed": "tabby",
-      "email": "hello@healingangels.site",
-      "phone": "+90 555 000 1000",
       "status": "approved",
       "submitted_at": "2026-08-04"
     },
@@ -47,8 +41,6 @@
       "photo_url": "",
       "pet_species": "dog",
       "pet_breed": "anatolian shepherd mix",
-      "email": "hello@healingangels.site",
-      "phone": "+90 555 000 1000",
       "status": "approved",
       "submitted_at": "2026-08-06"
     }

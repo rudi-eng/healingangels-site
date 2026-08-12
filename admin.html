@@ -21,7 +21,25 @@
   </div>
 </header>
 
-<div class="admin-shell" id="dash">
+<!-- LOGIN (password lock) -->
+<section class="admin-login" id="login-view">
+  <div class="form-card">
+    <h2 style="text-align:center;">Owner sign in</h2>
+    <p class="muted" style="text-align:center; margin-top:0;">This desk is password protected. Changes save automatically in this browser.</p>
+    <form id="login-form" style="margin-top: 24px;" autocomplete="on">
+      <div class="field">
+        <label for="login-pass">Password</label>
+        <input id="login-pass" name="password" type="password" autocomplete="current-password" required autofocus>
+      </div>
+      <div class="actions"><button type="submit" class="btn" style="width:100%;">Unlock</button></div>
+      <div class="form-msg" id="login-msg"></div>
+      <p class="form-note" id="login-hint">Default password: <strong>1234Laleh</strong> — change it after you sign in.</p>
+    </form>
+  </div>
+</section>
+
+<!-- DASHBOARD (hidden until login) -->
+<div class="admin-shell hidden" id="dash">
   <aside class="admin-side">
     <div class="brand"><span class="brand-name">Healing Angels</span></div>
     <nav class="admin-nav" id="admin-nav">
@@ -29,15 +47,19 @@
       <a href="#blog" data-tab="blog">Blog</a>
       <a href="#members" data-tab="members">Members</a>
       <a href="#listings" data-tab="listings">Caycuma</a>
-      <a href="#export" data-tab="export">Save JSON</a>
+      <a href="#password" data-tab="password">Password</a>
+      <a href="#backup" data-tab="backup">Backup</a>
     </nav>
+    <div style="margin-top:auto; padding-top: 18px;">
+      <button class="btn-ghost" id="logout-btn" style="width:100%;">Lock desk</button>
+    </div>
   </aside>
 
   <main class="admin-main">
 
     <section class="admin-tab active" id="tab-insight">
       <h2>Insight of the Day</h2>
-      <p class="muted">What visitors see on the homepage. Saving updates this browser; export JSON to put it on the live site.</p>
+      <p class="muted">Saves automatically when you press Save. Visitors see this on the homepage.</p>
       <form class="form-card" id="insight-form" style="max-width: 720px; margin-top: 20px;">
         <div class="field"><label for="i-excerpt">Phrase or excerpt</label><textarea id="i-excerpt" name="excerpt" style="min-height: 110px;" placeholder="A short phrase from the book."></textarea></div>
         <div class="field"><label for="i-prayer">Short prayer / reflection</label><textarea id="i-prayer" name="prayer" style="min-height: 130px;" placeholder="A short prayer to go with today's insight."></textarea></div>
@@ -54,7 +76,7 @@
 
     <section class="admin-tab" id="tab-blog">
       <h2>Blog / Journal</h2>
-      <p class="muted">Write a journal entry. Body supports simple Markdown (headings, bold, lists, links).</p>
+      <p class="muted">Write a journal entry. Saves automatically to this browser.</p>
       <form class="form-card" id="post-form" style="max-width: 720px; margin-top: 20px;">
         <input type="hidden" name="id" id="p-id">
         <div class="field"><label for="p-title">Title</label><input id="p-title" name="title" required></div>
@@ -78,7 +100,7 @@
 
     <section class="admin-tab" id="tab-members">
       <h2>Members</h2>
-      <p class="muted">Stories only. <strong>Email and phone are never shown here</strong> — open <code>data/members.json</code> (or the exported file) when you need to contact someone.</p>
+      <p class="muted">Stories only. <strong>Email and phone are secret</strong> — never shown here. They are kept in a locked private vault and only appear in a password-protected backup download.</p>
       <h3 style="margin-top: 24px;">Pending submissions</h3>
       <table class="admin-table" id="pending-table">
         <thead><tr><th>Name</th><th>Pet</th><th>Story</th><th>Submitted</th><th>Actions</th></tr></thead>
@@ -93,7 +115,7 @@
 
     <section class="admin-tab" id="tab-listings">
       <h2>Friends of Caycuma</h2>
-      <p class="muted">Adoption listings and volunteer offers. Contact details stay in the JSON only — not in this table.</p>
+      <p class="muted">Contact details stay in the secret vault — not in these tables.</p>
       <h3 style="margin-top: 24px;">Pending</h3>
       <table class="admin-table" id="list-pending-table">
         <thead><tr><th>Type</th><th>Title</th><th>Details</th><th>Actions</th></tr></thead>
@@ -106,23 +128,45 @@
       </table>
     </section>
 
-    <section class="admin-tab" id="tab-export">
-      <h2>Save to JSON</h2>
-      <p class="muted">This site is plain HTML + JSON. Edits live in this browser until you download the files and put them in the <code>data/</code> folder (then upload or push to GitHub).</p>
+    <section class="admin-tab" id="tab-password">
+      <h2>Change password</h2>
+      <p class="muted">Choose a password only you know. You will need it every time you open the owner desk in a new browser tab.</p>
+      <form class="form-card" id="password-form" style="max-width: 480px; margin-top: 20px;" autocomplete="off">
+        <div class="field">
+          <label for="pw-current">Current password</label>
+          <input id="pw-current" name="current" type="password" required autocomplete="current-password">
+        </div>
+        <div class="field">
+          <label for="pw-new">New password</label>
+          <input id="pw-new" name="new" type="password" required minlength="4" autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label for="pw-confirm">Confirm new password</label>
+          <input id="pw-confirm" name="confirm" type="password" required minlength="4" autocomplete="new-password">
+        </div>
+        <div class="actions"><button type="submit" class="btn">Update password</button></div>
+        <div class="form-msg" id="password-msg"></div>
+        <p class="form-note">Tip: write your new password somewhere safe. If you forget it, clear this site’s browser data for this domain (that also clears stored stories until you restore a backup).</p>
+      </form>
+    </section>
+
+    <section class="admin-tab" id="tab-backup">
+      <h2>Secret backup</h2>
+      <p class="muted">Everything saves automatically while you work. Use this only when you want a private file copy (includes email &amp; phone). Keep the files offline — do not publish them on the open website.</p>
       <div class="form-card" style="max-width: 640px; margin-top: 20px;">
-        <p style="margin-top:0;">Downloads four files (email &amp; phone are inside <code>members.json</code> and <code>listings.json</code> only):</p>
+        <p style="margin-top:0;">Downloads (locked to signed-in owner):</p>
         <ul style="color: var(--ink-soft); line-height: 1.9;">
-          <li><code>insight.json</code></li>
-          <li><code>members.json</code></li>
-          <li><code>blog.json</code></li>
-          <li><code>listings.json</code></li>
+          <li><code>insight.json</code> — public insight</li>
+          <li><code>blog.json</code> — journal posts</li>
+          <li><code>members.json</code> — stories <strong>+ secret email/phone</strong></li>
+          <li><code>listings.json</code> — Caycuma <strong>+ secret email/phone</strong></li>
+          <li><code>private-contacts.json</code> — contacts vault only</li>
         </ul>
         <div class="actions" style="margin-top: 20px;">
-          <button type="button" class="btn" id="export-json">Download all JSON</button>
-          <button type="button" class="btn-ghost" id="reset-local">Reset to site files</button>
+          <button type="button" class="btn" id="export-json">Download secret backup</button>
+          <button type="button" class="btn-ghost" id="reset-local">Reset content to site files</button>
         </div>
         <div class="form-msg" id="export-msg"></div>
-        <p class="form-note">Tip: after download, replace the files in <code>data/</code> and redeploy. Visitors always load those files.</p>
       </div>
     </section>
 
@@ -131,7 +175,7 @@
 
 <footer class="site-footer" style="margin-top: 0;">
   <div class="container">
-    <div class="footer-bottom"><span>&copy; <span data-year>2026</span> Healing Angels · Owner desk</span><span class="faint">simple JSON under the hood</span></div>
+    <div class="footer-bottom"><span>&copy; <span data-year>2026</span> Healing Angels · Owner desk</span><span class="faint">password protected</span></div>
   </div>
 </footer>
 
