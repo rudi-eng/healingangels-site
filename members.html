@@ -88,14 +88,13 @@
         <label style="display:block; padding:5px 0;"><input type="checkbox" name="badges" value="adopter"> <span>I have adopted a cat or dog</span></label>
         <label style="display:block; padding:5px 0;"><input type="checkbox" name="badges" value="volunteer"> <span>I volunteer with animals</span></label>
       </fieldset>
-      <div class="field">
-        <label for="m-contact">Public contact (optional — only shown if you fill this in)</label>
-        <input id="m-contact" name="contact_value" placeholder="email, website, or social handle">
-        <input type="hidden" name="contact_type" value="email">
+      <div class="field-row">
+        <div class="field"><label for="m-email">Email</label><input id="m-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+        <div class="field"><label for="m-phone">Phone</label><input id="m-phone" name="phone" type="tel" required autocomplete="tel" placeholder="+90 …"></div>
       </div>
       <div class="actions"><button type="submit" class="btn">Send my story</button></div>
       <div class="form-msg" id="join-msg"></div>
-      <p class="form-note">Your story is held for the owner's approval before it appears. Thank you for trusting us with it.</p>
+      <p class="form-note">Email and phone stay private in the owner’s data file — they are never shown on the public site or in the owner desk. Your story is held for approval first.</p>
     </form>
   </div>
 </section>
@@ -107,7 +106,7 @@
       <div><div class="footer-brand">Healing Angels</div><p class="muted">A prayerful community about how cats and dogs heal us — and how we heal them in return.</p></div>
       <div><h4>Explore</h4><a href="index.html">Home</a><a href="members.html">Members</a><a href="blog.html">Blog</a><a href="club.html">Friends of Caycuma</a></div>
       <div><h4>Take part</h4><a href="#join">Become a member</a><a href="club.html#donate">Donate</a><a href="club.html#volunteer">Volunteer</a><a href="club.html#adopt">Adopt</a></div>
-      <div><h4>Owner</h4><a href="admin.html">Owner login</a><a href="mailto:hello@healingangels.site">Contact</a></div>
+      <div><h4>Owner</h4><a href="admin.html">Owner desk</a><a href="mailto:hello@healingangels.site">Contact</a></div>
     </div>
     <div class="footer-bottom"><span>&copy; <span data-year>2026</span> <span>Healing Angels · Friends of Caycuma</span></span><span class="faint">made with quiet prayers</span></div>
   </div>
@@ -126,7 +125,7 @@ function showMsg(id, kind, text) {
 function renderMembers(list) {
   const grid = document.getElementById("members-grid");
   if (!list || list.length === 0) {
-    grid.innerHTML = '<p class="empty">' + HA.esc("No members yet — be the first to share your story below.") + '</p>';
+    grid.innerHTML = '<p class="empty">No members yet — be the first to share your story below.</p>';
     return;
   }
   grid.innerHTML = list.map((m, idx) => `
@@ -137,7 +136,6 @@ function renderMembers(list) {
         <div class="card-sub">${HA.esc(m.pet_name || "")}${m.pet_species ? " · " + HA.esc(m.pet_species) : ""}${m.location ? " · " + HA.esc(m.location) : ""}</div>
         <p class="card-text">${HA.esc(m.story || "")}</p>
         ${(m.badges || []).map(b => `<span class="badge ${HA.esc(b)}">${HA.esc(HA.badgeLabel(b))}</span>`).join("")}
-        ${m.contact_value ? `<p class="faint" style="font-size:.86rem; margin-top:8px;">${HA.esc("Contact:")} ${HA.esc(m.contact_value)}</p>` : ""}
       </div>
     </article>`).join("");
 }
@@ -146,7 +144,7 @@ function loadMembers() {
   HA.api.members()
     .then(d => renderMembers(d.members))
     .catch(() => {
-      document.getElementById("members-grid").innerHTML = '<p class="empty">' + HA.esc("Members will appear here soon.") + '</p>';
+      document.getElementById("members-grid").innerHTML = '<p class="empty">Members will appear here soon.</p>';
     });
 }
 
@@ -165,16 +163,16 @@ document.getElementById("join-form").addEventListener("submit", async (e) => {
     pet_breed: f.pet_breed.value,
     photo_url: f.photo_url.value,
     story: f.story.value,
+    email: f.email.value,
+    phone: f.phone.value,
     badges,
-    contact_type: f.contact_type.value,
-    contact_value: f.contact_value.value,
   };
   try {
     await HA.api.registerMember(body);
-    showMsg("join-msg", "ok", "Thank you — your story has been sent. The owner will read it and approve it soon.");
+    showMsg("join-msg", "ok", "Thank you — your story has been received. The owner will read it and approve it soon.");
     f.reset();
   } catch (err) {
-    showMsg("join-msg", "err", "Sorry, something went wrong." + " " + err.message);
+    showMsg("join-msg", "err", "Sorry, something went wrong. " + err.message);
   } finally {
     btn.disabled = false; btn.textContent = "Send my story";
   }

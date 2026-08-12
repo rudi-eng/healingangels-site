@@ -2,62 +2,68 @@
 
 A quiet, professional, prayerful community website about how cats (and dogs) heal us — and how we heal them in return. Built for the **Friends of Caycuma** rescue effort in Caycuma.
 
-The site is in **English**.
+**English only.** Beautiful on the outside, simple underneath: plain HTML, CSS, JS, and a few JSON files. No database. No worker. No login wall.
 
-The site has:
+## How it works
 
-- **`index.html`** — landing page with the daily **Insight of the Day** (a phrase from the book + a short prayer), a preview of the **Therapy Session** gallery, a **Friends of Caycuma** call-to-action, and the latest journal entries.
-- **`members.html`** — the **Therapy Session** gallery rendered from the database, plus a public "become a member" form (submissions go to an owner approval queue).
-- **`members.json`** is replaced by a real database (Cloudflare D1) — see `docs/DEPLOY.md`.
-- **`club.html`** — **Friends of Caycuma**: donate, volunteer, adopt (cats **and** dogs), and list-a-pet for adoption.
-- **`blog.html`** + **`blog/post.html`** — the owner's journal.
-- **`admin.html`** — owner-only dashboard: write today's insight, post a journal entry, approve member & pet-listing submissions, upload photos to R2.
+| Piece | What it is |
+|--------|------------|
+| Public pages | Static HTML that load `data/*.json` |
+| Content | `data/insight.json`, `members.json`, `blog.json`, `listings.json` |
+| Signups | Forms save into this browser; owner exports JSON to put back in `data/` |
+| Owner desk | `admin.html` — write insight & blog, approve stories, download JSON |
 
-## Stack
+**Email and phone** are collected on member, volunteer, and list-a-pet forms. They live **only inside the JSON files**. They are **never** shown on the public site or on the owner desk. Open `data/members.json` or `data/listings.json` when you need to contact someone.
 
-- **Frontend**: static HTML/CSS/JS — served by Cloudflare Pages (auto-deploys from GitHub on every push).
-- **API**: a Python Cloudflare Worker (`worker/`) — see `worker/src/main.py`.
-- **Database**: Cloudflare **D1** (SQLite).
-- **Photos**: Cloudflare **R2** (`healing-photos` bucket).
-- **Auth**: hashed password (sha256 + salt) verified in the Worker, signed session cookie (HMAC-SHA256) in HttpOnly + SameSite=Lax + Secure.
+## Pages
 
-All on Cloudflare's **free tier**.
+- **`index.html`** — Insight of the Day, therapy preview, Caycuma call-to-action, journal preview  
+- **`members.html`** — therapy stories + join form (email + phone required)  
+- **`club.html`** — donate, volunteer, adopt, list a pet  
+- **`blog.html`** / **`blog/post.html`** — journal  
+- **`admin.html`** — owner desk (no password; export JSON when done)
 
-## Quick start (read this first)
+## Everyday workflow
 
-1. **Read `docs/DEPLOY.md`** — 15-minute setup on Cloudflare + GitHub.
-2. **Read `docs/ADMIN.md`** — how the owner uses the dashboard.
-3. **Read `docs/SECURITY.md`** — how the admin login is protected, and what to do if you ever want to rotate the password.
+1. Open the site (or `admin.html`).
+2. Write today’s insight, a blog post, approve members.
+3. **Save JSON** → downloads four files.
+4. Drop them into the `data/` folder and push / re-upload.
+5. Live site updates. That’s it.
 
-## Daily workflow (for the owner, once deployed)
+## Local preview
 
-1. Go to `https://healingangels.site/admin`
-2. Sign in with your username & password.
-3. Write today's **Insight of the Day** → publish.
-4. Optionally: write a blog post, approve members, approve list-a-pet submissions, upload a photo.
-5. Nothing else. No code, no commits.
+```
+python -m http.server 8000
+```
+
+Open <http://localhost:8000>. (JSON needs a tiny local server — opening `index.html` as a file often blocks fetch.)
+
+## Deploy (Cloudflare Pages)
+
+1. Push this repo to GitHub (`rudi-eng/healingangels-site`).
+2. Cloudflare Pages → Connect to Git → this repo.
+3. Framework: **None** · Build command: empty · Output directory: `/`
+4. Deploy. Done.
+
+Optional: custom domain `healingangels.site`.
 
 ## Repository layout
 
 ```
 healingangels-site/
-├── index.html  club.html  members.html  admin.html  blog.html
+├── index.html  members.html  club.html  blog.html  admin.html
 ├── blog/post.html
-├── assets/
-│   ├── css/styles.css
-│   ├── js/app.js   (shared frontend runtime + API client)
-│   └── js/admin.js (owner dashboard runtime)
-├── wrangler.toml            Cloudflare Pages (static site)
-├── worker/                  Python Cloudflare Worker (the API)
-│   ├── wrangler.toml
-│   ├── pyproject.toml
-│   └── src/main.py
-├── schema/schema.sql        D1 table definitions
-├── seed/                    example content loaded by scripts/seed.py
-├── scripts/
-│   ├── seed.py              apply schema + seed data to D1
-│   └── hash.py              generate the ADMIN_PASSWORD_HASH secret
-└── docs/                    DEPLOY.md, ADMIN.md, SECURITY.md
+├── data/                 ← all content lives here
+│   ├── insight.json
+│   ├── members.json      ← includes private email & phone
+│   ├── blog.json
+│   └── listings.json     ← includes private email & phone
+├── assets/css/styles.css
+├── assets/js/app.js      ← loads JSON + forms
+├── assets/js/admin.js    ← owner desk
+├── wrangler.toml         ← Pages project name only
+└── docs/
 ```
 
 ## A note from the owner

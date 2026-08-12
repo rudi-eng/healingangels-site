@@ -87,21 +87,22 @@
     <form class="form-card" id="volunteer-form" autocomplete="on">
       <div class="field-row">
         <div class="field"><label for="v-name">Your name</label><input id="v-name" name="name" required></div>
-        <div class="field"><label for="v-email">Email</label><input id="v-email" name="email" type="email" required></div>
+        <div class="field"><label for="v-city">City / town</label><input id="v-city" name="location"></div>
       </div>
       <div class="field-row">
-        <div class="field"><label for="v-city">City / town</label><input id="v-city" name="location"></div>
-        <div class="field">
-          <label for="v-role">How would you like to help?</label>
-          <select id="v-role" name="role">
-            <option>Feeding street cats</option>
-            <option>Walking rescue dogs</option>
-            <option>Fostering temporarily</option>
-            <option>Transport to the vet</option>
-            <option>Visiting shy rescues</option>
-            <option>Something else</option>
-          </select>
-        </div>
+        <div class="field"><label for="v-email">Email</label><input id="v-email" name="email" type="email" required autocomplete="email"></div>
+        <div class="field"><label for="v-phone">Phone</label><input id="v-phone" name="phone" type="tel" required autocomplete="tel" placeholder="+90 …"></div>
+      </div>
+      <div class="field">
+        <label for="v-role">How would you like to help?</label>
+        <select id="v-role" name="role">
+          <option>Feeding street cats</option>
+          <option>Walking rescue dogs</option>
+          <option>Fostering temporarily</option>
+          <option>Transport to the vet</option>
+          <option>Visiting shy rescues</option>
+          <option>Something else</option>
+        </select>
       </div>
       <div class="field">
         <label for="v-avail">When are you usually free?</label>
@@ -113,7 +114,7 @@
       </div>
       <div class="actions"><button type="submit" class="btn">Offer your time</button></div>
       <div class="form-msg" id="volunteer-msg"></div>
-      <p class="form-note">The owner will receive your offer and reply to you by email.</p>
+      <p class="form-note">Email and phone stay private in the owner’s data file — not on the public site or owner desk.</p>
     </form>
   </div>
 </section>
@@ -160,13 +161,14 @@
         <label for="l-body">Tell us about this pet</label>
         <textarea id="l-body" name="body" required placeholder="The pet's story, temperament, where it is, and how to contact the carer."></textarea>
       </div>
+      <div class="field"><label for="l-submitter">Your name</label><input id="l-submitter" name="submitter" required></div>
       <div class="field-row">
-        <div class="field"><label for="l-contact">Your contact (for the adopter)</label><input id="l-contact" name="contact" required placeholder="email or phone"></div>
-        <div class="field"><label for="l-submitter">Your name</label><input id="l-submitter" name="submitter" required></div>
+        <div class="field"><label for="l-email">Email</label><input id="l-email" name="email" type="email" required autocomplete="email"></div>
+        <div class="field"><label for="l-phone">Phone</label><input id="l-phone" name="phone" type="tel" required autocomplete="tel" placeholder="+90 …"></div>
       </div>
       <div class="actions"><button type="submit" class="btn">Submit for review</button></div>
       <div class="form-msg" id="list-msg"></div>
-      <p class="form-note">Your submission is held for the owner's approval before it appears publicly.</p>
+      <p class="form-note">Email and phone stay private in the owner’s data file. Your listing is held for approval first.</p>
     </form>
   </div>
 </section>
@@ -178,7 +180,7 @@
       <div><div class="footer-brand">Healing Angels</div><p class="muted">A prayerful community about how cats and dogs heal us — and how we heal them in return.</p></div>
       <div><h4>Explore</h4><a href="index.html">Home</a><a href="members.html">Members</a><a href="blog.html">Blog</a><a href="club.html">Friends of Caycuma</a></div>
       <div><h4>Take part</h4><a href="members.html#join">Become a member</a><a href="#donate">Donate</a><a href="#volunteer">Volunteer</a><a href="#adopt">Adopt</a></div>
-      <div><h4>Owner</h4><a href="admin.html">Owner login</a><a href="mailto:hello@healingangels.site">Contact</a></div>
+      <div><h4>Owner</h4><a href="admin.html">Owner desk</a><a href="mailto:hello@healingangels.site">Contact</a></div>
     </div>
     <div class="footer-bottom"><span>&copy; <span data-year>2026</span> <span>Healing Angels · Friends of Caycuma</span></span><span class="faint">made with quiet prayers</span></div>
   </div>
@@ -204,14 +206,20 @@ HA.setNavActive("club");
       const body = {
         type: "volunteer",
         title: f.name.value,
-        body: f.message.value + " — availability: " + f.availability.value,
-        contact: f.email.value + (f.location.value ? " (" + f.location.value + ")" : ""),
+        body: [
+          f.role && f.role.value ? "Role: " + f.role.value : "",
+          f.location && f.location.value ? "City: " + f.location.value : "",
+          f.availability && f.availability.value ? "Availability: " + f.availability.value : "",
+          f.message && f.message.value ? f.message.value : ""
+        ].filter(Boolean).join("\n"),
+        email: f.email.value,
+        phone: f.phone.value,
       };
       await HA.api.submitListing(body);
-      showMsg("volunteer-msg", "ok", "Thank you — your offer has been sent. The owner will reply by email.");
+      showMsg("volunteer-msg", "ok", "Thank you — your offer has been received. The owner will be in touch.");
       f.reset();
     } catch (err) {
-      showMsg("volunteer-msg", "err", "Sorry, something went wrong." + " " + err.message);
+      showMsg("volunteer-msg", "err", "Sorry, something went wrong. " + err.message);
     } finally {
       btn.disabled = false; btn.textContent = "Offer your time";
     }
@@ -230,13 +238,14 @@ HA.setNavActive("club");
         pet_breed: f.pet_breed.value,
         photo_url: f.photo_url.value,
         body: f.body.value + " (submitted by " + f.submitter.value + ")",
-        contact: f.contact.value,
+        email: f.email.value,
+        phone: f.phone.value,
       };
       await HA.api.submitListing(body);
-      showMsg("list-msg", "ok", "Thank you — your pet has been submitted for the owner's review.");
+      showMsg("list-msg", "ok", "Thank you — your pet has been submitted for review.");
       f.reset();
     } catch (err) {
-      showMsg("list-msg", "err", "Sorry, something went wrong." + " " + err.message);
+      showMsg("list-msg", "err", "Sorry, something went wrong. " + err.message);
     } finally {
       btn.disabled = false; btn.textContent = "Submit for review";
     }
@@ -247,7 +256,7 @@ HA.setNavActive("club");
       const list = (data && data.listings) ? data.listings.filter(l => l.type === "adopt") : [];
       const grid = document.getElementById("adopt-grid");
       if (list.length === 0) {
-        grid.innerHTML = '<p class="empty">' + HA.esc("No pets are listed for adoption right now. Please check back soon — or list one yourself below.") + '</p>';
+        grid.innerHTML = '<p class="empty">No pets are listed for adoption right now. Please check back soon — or list one yourself below.</p>';
         return;
       }
       grid.innerHTML = list.map((p, idx) => `
@@ -260,17 +269,17 @@ HA.setNavActive("club");
               ${p.pet_breed ? `<span class="pet-tag">${HA.esc(p.pet_breed)}</span>` : ""}
             </div>
             <p class="card-text">${HA.esc((p.body || "").slice(0, 160))}${(p.body || "").length > 160 ? "…" : ""}</p>
-            <p class="faint" style="font-size:.86rem; margin-top:10px;">${HA.esc("To apply:")} ${HA.esc(p.contact || "contact the owner")}</p>
+            <p class="faint" style="font-size:.86rem; margin-top:10px;">To apply, contact the owner at hello@healingangels.site</p>
           </div>
         </article>`).join("");
     }).catch(() => {
-      document.getElementById("adopt-grid").innerHTML = '<p class="empty">' + HA.esc("Adoptable pets will appear here soon.") + '</p>';
+      document.getElementById("adopt-grid").innerHTML = '<p class="empty">Adoptable pets will appear here soon.</p>';
     });
   }
 
   loadAdopt();
-  
-document.querySelectorAll("[data-amount]").forEach(b => b.addEventListener("click", (e) => {
+
+  document.querySelectorAll("[data-amount]").forEach(b => b.addEventListener("click", (e) => {
     e.preventDefault();
     document.getElementById("donate-note").textContent = "Donation link is being set up by the owner. To give now, please email hello@healingangels.site — thank you.";
   }));

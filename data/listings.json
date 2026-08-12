@@ -1,48 +1,56 @@
 {
   "listings": [
     {
-      "id": "l_seed_001",
+      "id": "l_001",
       "type": "adopt",
       "title": "Momot",
       "body": "A small gray cat with white socks, about eighteen months old, found near the Caycuma river bridge. Momot is shy but loves other cats. Needs a calm home without small children.",
       "photo_url": "",
       "pet_species": "cat",
       "pet_breed": "gray domestic",
-      "contact": "hello@healingangels.site",
-      "status": "approved"
+      "email": "hello@healingangels.site",
+      "phone": "+90 555 000 1000",
+      "status": "approved",
+      "submitted_at": "2026-08-01"
     },
     {
-      "id": "l_seed_002",
+      "id": "l_002",
       "type": "adopt",
       "title": "Badem",
       "body": "A one-eared yellow dog, around four years old. Walks beautifully on a lead and adores children. Needs a family with a garden — or at least a long daily walk and a person who has time to listen.",
       "photo_url": "",
       "pet_species": "dog",
       "pet_breed": "mixed street",
-      "contact": "hello@healingangels.site",
-      "status": "approved"
+      "email": "hello@healingangels.site",
+      "phone": "+90 555 000 1000",
+      "status": "approved",
+      "submitted_at": "2026-08-02"
     },
     {
-      "id": "l_seed_003",
+      "id": "l_003",
       "type": "adopt",
       "title": "Two shy kittens",
       "body": "Two bonded tabby kittens (brother and sister) about ten weeks old. Must be adopted together. They are still learning to trust — perfect for a patient person who has had cats before.",
       "photo_url": "",
       "pet_species": "cat",
       "pet_breed": "tabby",
-      "contact": "hello@healingangels.site",
-      "status": "approved"
+      "email": "hello@healingangels.site",
+      "phone": "+90 555 000 1000",
+      "status": "approved",
+      "submitted_at": "2026-08-04"
     },
     {
-      "id": "l_seed_004",
+      "id": "l_004",
       "type": "adopt",
       "title": "Kaşar",
       "body": "A big gentle giant of a dog. Kaşar is calm, loving, and patient. He is gentle even with the smallest rescues in our care. A small farm or a quiet couple would suit him perfectly.",
       "photo_url": "",
       "pet_species": "dog",
       "pet_breed": "anatolian shepherd mix",
-      "contact": "hello@healingangels.site",
-      "status": "approved"
+      "email": "hello@healingangels.site",
+      "phone": "+90 555 000 1000",
+      "status": "approved",
+      "submitted_at": "2026-08-06"
     }
   ]
 }

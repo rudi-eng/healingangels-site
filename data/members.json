@@ -1,49 +1,49 @@
 {
   "members": [
     {
-      "id": "m_seed_001",
+      "id": "m_001",
       "name": "Laleh",
       "location": "Caycuma",
       "photo_url": "",
       "pet_name": "Luna",
       "pet_species": "cat",
       "pet_breed": "tabby",
-      "pet_adopted": true,
       "story": "After my mother passed, I stopped speaking for almost three weeks. On the eighteenth day, a small tabby walked in through the open kitchen window, sat on my chest as I lay on the floor, and simply stayed. She did not ask me to talk. She asked me to breathe. I do not know if that is prayer. I only know it worked.",
-      "contact_type": "email",
-      "contact_value": "hello@healingangels.site",
+      "email": "laleh@example.com",
+      "phone": "+90 555 000 0001",
       "badges": ["donated", "adopter", "volunteer"],
-      "status": "approved"
+      "status": "approved",
+      "submitted_at": "2026-08-01"
     },
     {
-      "id": "m_seed_002",
+      "id": "m_002",
       "name": "Daniel",
       "location": "Istanbul",
       "photo_url": "",
       "pet_name": "Badem",
       "pet_species": "dog",
       "pet_breed": "mixed street",
-      "pet_adopted": true,
       "story": "I was not a dog person — I said so many times. Then one wet evening a yellow dog with one wonky ear followed me home from the bakery. I told him he could not stay. He stayed anyway. Within a month the panic attacks I had had for years became quieter. I do not think Badem healed me. I think Badem simply believed I was already well, and slowly I started to believe him.",
-      "contact_type": "email",
-      "contact_value": "",
+      "email": "daniel@example.com",
+      "phone": "+90 555 000 0002",
       "badges": ["adopter", "volunteer"],
-      "status": "approved"
+      "status": "approved",
+      "submitted_at": "2026-08-03"
     },
     {
-      "id": "m_seed_003",
+      "id": "m_003",
       "name": "Sara",
       "location": "Ankara",
       "photo_url": "",
       "pet_name": "Pepper",
       "pet_species": "cat",
       "pet_breed": "black domestic",
-      "pet_adopted": true,
       "story": "Pepper came home with me on the worst winter of my life. I was cold in a way that had nothing to do with weather. She would find me wherever I sat and press her small warm forehead against my wrist — every single night, without fail, for two years. I am warm again now. I owe at least half of that to a four-kilogram black cat who never read a single book about healing.",
-      "contact_type": "email",
-      "contact_value": "",
+      "email": "sara@example.com",
+      "phone": "+90 555 000 0003",
       "badges": ["donated", "adopter"],
-      "status": "approved"
+      "status": "approved",
+      "submitted_at": "2026-08-05"
     }
   ]
 }
