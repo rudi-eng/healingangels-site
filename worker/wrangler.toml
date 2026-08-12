@@ -1,29 +1,30 @@
+# Healing Angels API — Cloudflare Worker (Python)
+# Deploy from this folder:  cd worker  &&  npx wrangler deploy
+# (or: uv run pywrangler deploy)
+
 name = "healingangels-api"
 main = "src/main.py"
-compatibility_date = "2025-09-01"
+compatibility_date = "2026-08-11"
 compatibility_flags = ["python_workers"]
 
-# D1 database binding — create with:
-#   wrangler d1 create healingangels
-# then paste the database_id below.
+# D1 database
+# Create:  npx wrangler d1 create healingangels
+# Then paste the real database_id UUID below (do not leave a placeholder).
 [[d1_databases]]
 binding = "DB"
 database_name = "healingangels"
-database_id = "REPLACE_WITH_D1_ID"
+database_id = "00000000-0000-0000-0000-000000000000"
 
-# R2 bucket binding — create with:
-#   wrangler r2 bucket create healing-photos
+# R2 photo bucket
+# Create:  npx wrangler r2 bucket create healing-photos
 [[r2_buckets]]
 binding = "PHOTOS"
 bucket_name = "healing-photos"
 
-# Secrets (NEVER commit these). Set each with: wrangler secret put NAME
-#   ADMIN_USERNAME         e.g. "Laleh"
-#   ADMIN_PASSWORD_HASH    bcrypt hash of the chosen password (see scripts/hash.py)
-#   SESSION_SECRET         long random string for signing session cookies
+# Secrets (never commit real values). Set with:
+#   npx wrangler secret put ADMIN_USERNAME
+#   npx wrangler secret put ADMIN_PASSWORD_HASH
+#   npx wrangler secret put SESSION_SECRET
 
 [vars]
-# Public configuration. These can be committed.
 CORS_ORIGIN = "https://healingangels.pages.dev"
-# When you point healingangels.site to Cloudflare, set:
-# CORS_ORIGIN = "https://healingangels.site"

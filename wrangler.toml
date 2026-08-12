@@ -1,0 +1,12 @@
+# Healing Angels — Cloudflare Pages (static frontend only)
+# This file is for the public site. The API lives in worker/wrangler.toml.
+#
+# Pages settings (dashboard or CLI):
+#   Framework preset: None
+#   Build command: (empty)
+#   Build output directory: /
+#   Root directory: /
+
+name = "healingangels-site"
+compatibility_date = "2026-08-11"
+pages_build_output_dir = "."
